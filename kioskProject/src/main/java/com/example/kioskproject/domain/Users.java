@@ -15,5 +15,5 @@ public class Users {
     @Id
     private Long userId;
     private String userLoginId;
-    private String managerPw;
+    private String userPw;
 }
