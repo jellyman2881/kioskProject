@@ -18,12 +18,17 @@ public class Menu {
     private int menuPrice;
     private int menuStock;
     private char menuState;
+    private int menuSortingNumber;
     private String origFilename;
     private String filename;
     private String filePath;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CATEGORY_ID")
+    private Category category;
+
     @Builder
-    public Menu(Long menuId, String menuName, int menuPrice, int menuStock, char menuState, String origFilename,String filename,String filePath) {
+    public Menu(int menuSortingNumber, Category category, Long menuId, String menuName, int menuPrice, int menuStock, char menuState, String origFilename, String filename, String filePath) {
         this.menuId = menuId;
         this.menuName = menuName;
         this.menuPrice = menuPrice;
@@ -32,6 +37,8 @@ public class Menu {
         this.origFilename = origFilename;
         this.filename =filename;
         this.filePath = filePath;
+        this.category = category;
+        this.menuSortingNumber = menuSortingNumber;
 
     }
 }

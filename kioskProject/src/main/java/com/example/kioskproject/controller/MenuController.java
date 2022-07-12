@@ -1,20 +1,13 @@
 package com.example.kioskproject.controller;
-
-import com.example.kioskproject.domain.Menu;
-import com.example.kioskproject.dto.MenuDto;
+import com.example.kioskproject.dto.MenuDtoRequest;
+import com.example.kioskproject.dto.MenuDtoResponse;
 import com.example.kioskproject.service.MenuService;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.List;
 
@@ -27,13 +20,9 @@ public class MenuController {
     private final MenuService menuService;
 
     @PostMapping("/menu")
-    public void addMenu(@RequestParam(value = "file", required = false) MultipartFile uploadFile, MenuDto menuDto) {
-        menuService.addMenu(uploadFile, menuDto);
-    }
-
-    @GetMapping("/menu")
-    public Menu detailMenu(@PathVariable Long menuId) {
-        return menuService.detailMenu(menuId);
+    public void addMenu(@RequestParam(value = "file", required = false) MultipartFile uploadFile, MenuDtoRequest menuDto) {
+        System.out.println(menuDto);
+         menuService.addMenu(uploadFile, menuDto);
     }
 
     @DeleteMapping("/menu")
@@ -42,13 +31,13 @@ public class MenuController {
     }
 
     @PutMapping("/menu/{menuId}")
-    public Long editMenu(@RequestParam(value = "file", required = false) MultipartFile uploadFile, @PathVariable Long menuId, MenuDto menuDto) {
+    public Long editMenu(@RequestParam(value = "file", required = false) MultipartFile uploadFile, @PathVariable Long menuId, MenuDtoRequest menuDto) {
         return menuService.editMenu(uploadFile,menuId, menuDto);
     }
 
-    @GetMapping("/menuList")
-    public List<Menu> loadMenuList() {
-        return menuService.loadMenuList();
+    @GetMapping("/menuList/{categoryId}")
+    public List<MenuDtoResponse> loadMenuList(@PathVariable Long categoryId) {
+        return menuService.loadMenuList(categoryId);
     }
 
     @ResponseBody

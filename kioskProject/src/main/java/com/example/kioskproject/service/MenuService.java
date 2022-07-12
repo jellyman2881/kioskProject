@@ -1,7 +1,10 @@
 package com.example.kioskproject.service;
 
+import com.example.kioskproject.domain.Category;
 import com.example.kioskproject.domain.Menu;
-import com.example.kioskproject.dto.MenuDto;
+import com.example.kioskproject.dto.MenuDtoRequest;
+import com.example.kioskproject.dto.MenuDtoResponse;
+import com.example.kioskproject.repository.CategoryRepository;
 import com.example.kioskproject.repository.MenuRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,14 +16,16 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class MenuService {
     private final MenuRepository menuRepository;
+    private final CategoryRepository categoryRepository;
 
-    public void addMenu(MultipartFile uploadFile, MenuDto menuDto) {
+    public void addMenu(MultipartFile uploadFile, MenuDtoRequest menuDto) {
 
         try {
             String origFilename = uploadFile.getOriginalFilename();
@@ -30,18 +35,21 @@ public class MenuService {
             if (!new File(savePath).exists()) {
                 try {
                     new File(savePath).mkdir();
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     e.getStackTrace();
                 }
-            } String filePath = savePath + "\\" + filename;
+            }
+            String filePath = savePath + "\\" + filename;
             uploadFile.transferTo(new File(filePath));
             menuDto.setOrigFilename(origFilename);
             menuDto.setFilename(filename);
-            menuDto.setFilePath("\\src\\frontend\\src\\assets\\"+ filename);
-        }catch (Exception e) {
+            menuDto.setFilePath("\\src\\frontend\\src\\assets\\" + filename);
+        } catch (Exception e) {
             e.printStackTrace();
         }
+        Optional<Category> category = categoryRepository.findById(menuDto.getCategoryDtoId());
+        Category categoryEntity = category.orElse(null);
+        if (categoryEntity == null) return;
         Menu menu = Menu.builder()
                 .origFilename(menuDto.getOrigFilename())
                 .filename(menuDto.getFilename())
@@ -49,11 +57,14 @@ public class MenuService {
                 .menuName(menuDto.getMenuName())
                 .menuPrice(menuDto.getMenuPrice())
                 .menuState(menuDto.getMenuState())
+                .menuStock(menuDto.getMenuStock())
+                .menuSortingNumber(menuDto.getMenuSortingNumber())
+                .category(categoryEntity)
                 .build();
         menuRepository.save(menu);
     }
 
-    public Long editMenu(MultipartFile uploadFile,Long menuId, MenuDto menuDto) {
+    public Long editMenu(MultipartFile uploadFile, Long menuId, MenuDtoRequest menuDto) {
         try {
             String origFilename = uploadFile.getOriginalFilename();
             String now = new SimpleDateFormat("yyyyMMddHmsS").format(new Date());
@@ -62,16 +73,16 @@ public class MenuService {
             if (!new File(savePath).exists()) {
                 try {
                     new File(savePath).mkdir();
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     e.getStackTrace();
                 }
-            } String filePath = savePath + "\\" + filename;
+            }
+            String filePath = savePath + "\\" + filename;
             uploadFile.transferTo(new File(filePath));
             menuDto.setOrigFilename(origFilename);
             menuDto.setFilename(filename);
-            menuDto.setFilePath("\\src\\frontend\\src\\assets\\"+ filename);
-        }catch (Exception e) {
+            menuDto.setFilePath("\\src\\frontend\\src\\assets\\" + filename);
+        } catch (Exception e) {
             e.printStackTrace();
         }
         Optional<Menu> menu = menuRepository.findById(menuId);
@@ -84,23 +95,24 @@ public class MenuService {
         menuEntity.setFilename(menuDto.getFilename());
         menuEntity.setFilePath(menuDto.getFilePath());
         menuEntity.setOrigFilename(menuDto.getOrigFilename());
+        menuEntity.setMenuSortingNumber((menuDto.getMenuSortingNumber()));
         return menuId;
     }
 
-    public Menu detailMenu(Long menuId){
+    public void deleteMenu(Long menuId) {
         Optional<Menu> menu = menuRepository.findById(menuId);
-        if(menu.isEmpty()) return null;
-        return menu.get();
-    }
-
-    public void deleteMenu(Long menuId){
-        Optional<Menu> menu = menuRepository.findById(menuId);
-        if(menu.isEmpty()) return;
+        if (menu.isEmpty()) return;
         menuRepository.deleteById(menuId);
     }
 
-    public List<Menu> loadMenuList(){
-        List<Menu> menuList = menuRepository.findAll();
-        return menuList;
+    public List<MenuDtoResponse> loadMenuList(Long categoryId) {
+        Optional<Category> category = categoryRepository.findById(categoryId);
+        Category categoryEntity = category.orElse(null);
+        if (categoryEntity == null) return null;
+
+        List<Menu> menuList = menuRepository.findByCategory_CategoryIdOrderByMenuSortingNumber(categoryEntity.getCategoryId());
+        List<MenuDtoResponse> collect = menuList.stream().map(MenuDtoResponse::new).collect(Collectors.toList());
+
+        return collect;
     }
 }

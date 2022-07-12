@@ -14,6 +14,6 @@ public class OrderMenuDto {
     private Long orderMenuId;
     private int orderMenuQuentity;
     private int orderMenuOption;
-    private MenuDto menuDto;
+    private MenuDtoRequest menuDto;
 
 }
