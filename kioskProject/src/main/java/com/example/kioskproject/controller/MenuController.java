@@ -8,6 +8,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class MenuController {
     private final MenuService menuService;
 
     @PostMapping("/menu")
-    public void addMenu(@RequestParam(value = "file", required = false) MultipartFile uploadFile, MenuDtoRequest menuDto) {
+    public void addMenu(@RequestParam(value = "file", required = false) MultipartFile uploadFile, MenuDtoRequest menuDto) throws IOException {
         System.out.println(menuDto);
          menuService.addMenu(uploadFile, menuDto);
     }
@@ -31,7 +32,7 @@ public class MenuController {
     }
 
     @PutMapping("/menu/{menuId}")
-    public Long editMenu(@RequestParam(value = "file", required = false) MultipartFile uploadFile, @PathVariable Long menuId, MenuDtoRequest menuDto) {
+    public Long editMenu(@RequestParam(value = "file", required = false) MultipartFile uploadFile, @PathVariable Long menuId, MenuDtoRequest menuDto) throws IOException {
         return menuService.editMenu(uploadFile,menuId, menuDto);
     }
 

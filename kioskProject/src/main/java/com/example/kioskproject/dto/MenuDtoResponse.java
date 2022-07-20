@@ -18,9 +18,10 @@ public class MenuDtoResponse {
     private char menuState;
     private String origFilename;
     private String filename;
-    private String filePath;
     private String categoryDtoName;
     private int menuSortingNumber;
+    private char menuDouble;
+    private int menuDoublePrice;
 
     public MenuDtoResponse(Menu menu) {
         this.menuId = menu.getMenuId();
@@ -30,8 +31,10 @@ public class MenuDtoResponse {
         this.menuState = menu.getMenuState();
         this.origFilename = menu.getOrigFilename();
         this.filename = menu.getFilename();
-        this.filePath = menu.getFilePath();
         this.menuSortingNumber = menu.getMenuSortingNumber();
         this.categoryDtoName = menu.getCategory().getCategoryName();
+        this.menuDouble = menu.getMenuDouble();
+        this.menuDoublePrice = menu.getMenuDoublePrice();
+
     }
 }

@@ -16,5 +16,8 @@ public class CategoryDto {
         this.categoryId = category.getCategoryId();
         this.categoryName = category.getCategoryName();
         this.categorySortingNumber = category.getCategorySortingNumber();
+
+
+
     }
 }
