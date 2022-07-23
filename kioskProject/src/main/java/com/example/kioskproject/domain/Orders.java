@@ -28,4 +28,11 @@ public class Orders {
     @JoinColumn(name = "USER_ID")
     private Users users;
 
+    @Builder
+    public Orders(Long orderId, int orderPrice, LocalDateTime orderTime, Users users) {
+        this.orderId = orderId;
+        this.orderPrice = orderPrice;
+        this.orderTime = orderTime;
+        this.users = users;
+    }
 }

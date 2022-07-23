@@ -31,4 +31,12 @@ public class OrderMenu {
     @JoinColumn(name = "MENU_ID")
     private Menu menu;
 
+@Builder
+    public OrderMenu(Long orderMenuId, int orderMenuQuentity, int orderMenuOption, Orders orders, Menu menu) {
+        this.orderMenuId = orderMenuId;
+        this.orderMenuQuentity = orderMenuQuentity;
+        this.orderMenuOption = orderMenuOption;
+        this.orders = orders;
+        this.menu = menu;
+    }
 }
